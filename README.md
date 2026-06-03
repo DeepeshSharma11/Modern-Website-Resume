@@ -34,6 +34,7 @@ npx serve .
 2. **TechnoviaX Multi Services WebApp**: Full-stack lead and payments manager using FastAPI and React.js.
 3. **Focistore**: Software discovery hub built with Next.js and Supabase.
 4. **Jal Drishti**: Smart IoT-enabled water quality monitoring and resource management platform built with FastAPI and React.js.
+5. **Focitech.in**: Multi-service technology platform for products and digital services built on Next.js and FastAPI.
 
 ## Deployment
 
