@@ -4,6 +4,7 @@ const sections = Array.from(document.querySelectorAll('.section-content'));
         const backdrop = document.getElementById('mobile-backdrop');
         const menuButton = document.getElementById('menu-button');
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const isMobileViewport = window.matchMedia('(max-width: 767px)').matches;
 
         let revealObserver;
 
@@ -68,7 +69,7 @@ const sections = Array.from(document.querySelectorAll('.section-content'));
         }
 
         function initParticles() {
-            if (reduceMotion || !window.THREE) return;
+            if (reduceMotion || isMobileViewport || !window.THREE) return;
 
             const canvas = document.getElementById('bg-canvas');
             const scene = new THREE.Scene();
@@ -84,8 +85,7 @@ const sections = Array.from(document.querySelectorAll('.section-content'));
             renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
             renderer.setSize(window.innerWidth, window.innerHeight, false);
 
-            const isMobile = window.matchMedia('(max-width: 767px)').matches;
-            const particlesCount = isMobile ? 360 : 900;
+            const particlesCount = 520;
             const positions = new Float32Array(particlesCount * 3);
 
             for (let index = 0; index < positions.length; index += 1) {
@@ -96,10 +96,10 @@ const sections = Array.from(document.querySelectorAll('.section-content'));
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
             const material = new THREE.PointsMaterial({
-                size: isMobile ? 0.008 : 0.006,
+                size: 0.006,
                 color: '#7dd3fc',
                 transparent: true,
-                opacity: isMobile ? 0.45 : 0.62,
+                opacity: 0.55,
                 blending: THREE.AdditiveBlending,
                 depthWrite: false
             });
@@ -111,12 +111,26 @@ const sections = Array.from(document.querySelectorAll('.section-content'));
             let mouseX = 0;
             let mouseY = 0;
             let resizeFrame = 0;
+            let scrollTimer = 0;
+            let isRunning = false;
 
             function render() {
+                isRunning = true;
                 mesh.rotation.y += 0.0007 + (mouseX - mesh.rotation.y) * 0.015;
                 mesh.rotation.x += 0.00035 + (mouseY - mesh.rotation.x) * 0.015;
                 renderer.render(scene, camera);
                 rafId = requestAnimationFrame(render);
+            }
+
+            function stopRender() {
+                if (!isRunning) return;
+                cancelAnimationFrame(rafId);
+                isRunning = false;
+            }
+
+            function startRender() {
+                if (isRunning || document.hidden) return;
+                render();
             }
 
             function resize() {
@@ -129,23 +143,31 @@ const sections = Array.from(document.querySelectorAll('.section-content'));
                 });
             }
 
-            if (!isMobile) {
-                window.addEventListener('pointermove', (event) => {
-                    mouseX = (event.clientX / window.innerWidth - 0.5) * 0.35;
-                    mouseY = (event.clientY / window.innerHeight - 0.5) * 0.35;
-                }, { passive: true });
-            }
+            window.addEventListener('pointermove', (event) => {
+                mouseX = (event.clientX / window.innerWidth - 0.5) * 0.28;
+                mouseY = (event.clientY / window.innerHeight - 0.5) * 0.28;
+            }, { passive: true });
+
+            window.addEventListener('scroll', () => {
+                document.body.classList.add('is-scrolling');
+                stopRender();
+                window.clearTimeout(scrollTimer);
+                scrollTimer = window.setTimeout(() => {
+                    document.body.classList.remove('is-scrolling');
+                    startRender();
+                }, 140);
+            }, { passive: true });
 
             window.addEventListener('resize', resize, { passive: true });
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
-                    cancelAnimationFrame(rafId);
+                    stopRender();
                     return;
                 }
-                render();
+                startRender();
             });
 
-            render();
+            startRender();
         }
 
         window.addEventListener('keydown', (event) => {
