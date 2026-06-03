@@ -353,3 +353,20 @@
             }
         }
 
+        /* Dropdown Menu styling */
+        .dropdown-container:hover .dropdown-menu,
+        .dropdown-container:focus-within .dropdown-menu {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) !important;
+        }
+
+        .dropdown-trigger i,
+        .dropdown-trigger svg {
+            transition: transform 200ms ease;
+        }
+
+        .dropdown-container:hover .dropdown-trigger i,
+        .dropdown-container:hover .dropdown-trigger svg {
+            transform: rotate(180deg);
+        }
