@@ -18,3 +18,9 @@ Open `index.html` in a browser or deploy the folder to any static host.
 The resume button downloads:
 
 `Assets/Deepesh Sharma Resume.pdf`
+
+## Link Preview
+
+Social preview metadata uses:
+
+`Assets/seo-preview.png`
